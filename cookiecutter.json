@@ -1,4 +1,4 @@
 {
-  "name": "emo",
-  "group": "com.example"
+  "repo": "example-repo",
+  "name": "example-service"
 }
