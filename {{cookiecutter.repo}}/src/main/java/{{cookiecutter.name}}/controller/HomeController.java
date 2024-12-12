@@ -1,4 +1,4 @@
-package {{cookiecutter.group}}.{{cookiecutter.name}}.controller;
+package {{cookiecutter.name}}.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
