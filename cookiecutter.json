@@ -1,4 +1,5 @@
 {
   "repo": "example-repo",
-  "name": "example-service"
+  "name": "example-service",
+  "description": "Example description of service"
 }
