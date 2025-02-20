@@ -37,14 +37,15 @@ jobs:
     - name: Build and Push docker image to ECR
       env:
         ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+        ENVIRONMENT: ${{ vars.ENVIRONMENT }}
         #{% endraw -%} cookiecutter artifact
       run: |
-        if aws ecr describe-repositories --repository-names {{cookiecutter.repo}} --region us-east-1; then
-          echo "Repository {{cookiecutter.repo}} already exists."
+        if aws ecr describe-repositories --repository-names {{cookiecutter.repo}}-$ENVIRONMENT --region us-east-1; then
+          echo "Repository {{cookiecutter.repo}}-$ENVIRONMENT already exists."
         else
-          echo "Repository {{cookiecutter.repo}} does not exist, creating it..."
-          aws ecr create-repository --repository-name {{cookiecutter.repo}} --region us-east-1
+          echo "Repository {{cookiecutter.repo}}-$ENVIRONMENT does not exist, creating it..."
+          aws ecr create-repository --repository-name {{cookiecutter.repo}}-$ENVIRONMENT --region us-east-1
         fi
         docker build -t periodic-table-api . 
-        docker tag periodic-table-api:latest $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/{{cookiecutter.repo}}:latest
-        docker push $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/{{cookiecutter.repo}}:latest
+        docker tag periodic-table-api:latest $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/{{cookiecutter.repo}}-$ENVIRONMENT:latest
+        docker push $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/{{cookiecutter.repo}}-$ENVIRONMENT:latest
