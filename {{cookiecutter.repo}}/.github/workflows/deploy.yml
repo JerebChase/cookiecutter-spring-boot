@@ -1,0 +1,48 @@
+name: Build Docker Image and Push to ECR
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build with Maven
+      env:
+          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+      run: mvn -B package --file pom.xml -Dspring.profiles.active=$ENVIRONMENT
+    - name: Configure AWS credentials for Github Actions
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        role-to-assume: ${{ secrets.AWS_ACCESS_ROLE }}
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v2
+    - name: Build and Push docker image to ECR
+      env:
+        ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+      run: |
+        if aws ecr describe-repositories --repository-names {{cookiecutter.repo}} --region us-east-1; then
+          echo "Repository {{cookiecutter.repo}} already exists."
+        else
+          echo "Repository {{cookiecutter.repo}} does not exist, creating it..."
+          aws ecr create-repository --repository-name {{cookiecutter.repo}} --region us-east-1
+        fi
+        docker build -t periodic-table-api . 
+        docker tag periodic-table-api:latest $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/{{cookiecutter.repo}}:latest
+        docker push $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/{{cookiecutter.repo}}:latest
