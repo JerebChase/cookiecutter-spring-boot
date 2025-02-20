@@ -32,11 +32,11 @@ jobs:
       run: mvn -B package --file pom.xml -Dspring.profiles.active=$ENVIRONMENT
     - name: Configure AWS credentials for Github Actions
       uses: aws-actions/configure-aws-credentials@v4
+      {% raw -%}
       with:
         aws-region: us-east-1
-        {% raw -%}
         role-to-assume: ${{ secrets.AWS_ACCESS_ROLE }}
-        {% endraw -%}
+      {% endraw -%}
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v2
     - name: Build and Push docker image to ECR
