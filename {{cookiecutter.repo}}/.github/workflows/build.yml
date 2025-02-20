@@ -19,5 +19,7 @@ jobs:
         cache: maven
     - name: Build with Maven
       env:
-          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+        {% raw -%}
+        ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+        {% endraw -%}
       run: mvn -B package --file pom.xml -Dspring.profiles.active=$ENVIRONMENT

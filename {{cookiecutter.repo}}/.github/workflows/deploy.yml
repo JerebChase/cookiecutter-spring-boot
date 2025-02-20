@@ -26,18 +26,24 @@ jobs:
         cache: maven
     - name: Build with Maven
       env:
-          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+        {% raw -%}
+        ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+        {% endraw -%}
       run: mvn -B package --file pom.xml -Dspring.profiles.active=$ENVIRONMENT
     - name: Configure AWS credentials for Github Actions
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: us-east-1
+        {% raw -%}
         role-to-assume: ${{ secrets.AWS_ACCESS_ROLE }}
+        {% endraw -%}
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v2
     - name: Build and Push docker image to ECR
       env:
+        {% raw -%}
         ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+        {% endraw -%}
       run: |
         if aws ecr describe-repositories --repository-names {{cookiecutter.repo}} --region us-east-1; then
           echo "Repository {{cookiecutter.repo}} already exists."
