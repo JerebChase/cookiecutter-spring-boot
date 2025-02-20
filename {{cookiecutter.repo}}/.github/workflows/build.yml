@@ -1,4 +1,4 @@
-{% raw -%}
+#{% raw -%} cookiecutter artifact
 name: Java CI with Maven
 
 on:
@@ -22,4 +22,4 @@ jobs:
       env:
         ENVIRONMENT: ${{ vars.ENVIRONMENT }}
       run: mvn -B package --file pom.xml -Dspring.profiles.active=$ENVIRONMENT
-{% endraw -%}
+#{% endraw -%} cookiecutter artifact

@@ -1,4 +1,4 @@
-{% raw -%}
+#{% raw -%} cookiecutter artifact
 name: Build Docker Image and Push to ECR
 
 on:
@@ -37,7 +37,7 @@ jobs:
     - name: Build and Push docker image to ECR
       env:
         ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
-{% endraw -%}
+        #{% endraw -%} cookiecutter artifact
       run: |
         if aws ecr describe-repositories --repository-names {{cookiecutter.repo}} --region us-east-1; then
           echo "Repository {{cookiecutter.repo}} already exists."
