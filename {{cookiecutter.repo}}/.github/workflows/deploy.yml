@@ -9,25 +9,12 @@ permissions:
   contents: read
 
 jobs:
-  pre-build:
-    runs-on: ubuntu-latest
-    outputs:
-      env: ${{ steps.set-env.outputs.env }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Determine Environment
-        id: set-env
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "env=prod" >> $GITHUB_OUTPUT
-          else
-            echo "env=dev" >> $GITHUB_OUTPUT
-          fi
-
   build:
-    needs: pre-build
+
     runs-on: ubuntu-latest
-    environment: ${{ needs.pre-build.outputs.env }}
+    {% raw -%}
+    environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    {% endraw -%}
 
     steps:
     - uses: actions/checkout@v4
