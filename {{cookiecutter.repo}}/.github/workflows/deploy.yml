@@ -1,6 +1,10 @@
 #{% raw -%} cookiecutter artifact
 name: Build Docker Image and Push to ECR
 
+concurrency:
+  group: deploy-${{ github.repository }}
+  cancel-in-progress: false
+
 on:
   push:
     branches: [ "main", "dev" ]
@@ -32,7 +36,6 @@ jobs:
       with:
         aws-region: us-east-1
         role-to-assume: ${{ secrets.AWS_ACCESS_ROLE }}
-        role-session-name: ${{ github.run_id }}-${{ github.ref_name }}
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v2
     - name: Build and Push docker image to ECR
