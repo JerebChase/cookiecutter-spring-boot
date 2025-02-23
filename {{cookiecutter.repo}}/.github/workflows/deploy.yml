@@ -1,10 +1,6 @@
 #{% raw -%} cookiecutter artifact
 name: Build Docker Image and Push to ECR
 
-concurrency:
-  group: deploy-${{ github.repository }}
-  cancel-in-progress: false
-
 on:
   push:
     branches: [ "main", "dev" ]
